@@ -1,31 +1,33 @@
-# 筋ログ (Android)
+# 筋ログ (kinlog)
 
-広告なし・完全ローカル保存・AI評価つきの筋トレ記録アプリ。
+広告なし・完全ローカル保存の、シンプルな筋トレ記録アプリ（Android）。
 
-## 構成
-- Kotlin + Jetpack Compose + Room (SQLite)
-- targetSdk 36（2026-08-31以降のPlay必須要件に対応済み）
-- Auto Backup 有効：機種変更・再インストールでも記録が復元される（APIキーのみ除外）
-- AI評価は TrainingEvaluator インターフェースで抽象化
-  - OnDeviceEvaluator: Gemini Nano (ML Kit GenAI)。対応端末で維持費ゼロ・完全オフライン。
-    実装時に https://developers.google.com/ml-kit/genai の最新手順を確認して依存を追加すること。
-  - ByokGeminiEvaluator: ユーザー自身のGemini APIキーで動作（実装済み・動作可能）。
-    非対応端末のフォールバック。開発者側の費用ゼロ。
+トレーニングの種目・重量・回数を記録し、任意で AI によるトレーニング評価を受けられます。記録はすべて端末内に保存され、アカウント登録も不要です。
+
+## 主な機能
+
+- 種目ごとの重量・回数の記録（数値の直接入力にも対応）
+- 推定 1RM の自動計算
+- 日別の履歴表示と総挙上量の集計
+- JSON でのエクスポート／インポート（バックアップ）
+- 任意の AI 評価（直近4週間のボリューム推移・部位バランス・停滞打開策・翌週の推奨）
+
+## 技術構成
+
+- Kotlin + Jetpack Compose
+- Room (SQLite) によるローカル永続化
+- Android Auto Backup 対応（機種変更・再インストール時にデータを復元）
+- AI 評価は `TrainingEvaluator` インターフェースで抽象化し、実装を差し替え可能な設計
+  - `ByokGeminiEvaluator`: ユーザー自身の Gemini API キーで動作（BYOK 方式）
+
+## データの取り扱い
+
+トレーニング記録は端末内にのみ保存され、外部サーバーには送信されません。AI 評価を実行したときに限り、直近の記録テキストがユーザー自身の API キーを通じて Google の Gemini API に送信されます。詳しくは[プライバシーポリシー](./privacy/)を参照してください。
 
 ## ビルド
-1. Android Studio (Ladybug以降) で本フォルダを開く
-2. Gradle Sync → 実機/エミュレータで Run
-3. このコードはAndroid SDKなしの環境で書かれておりコンパイル未検証。
-   Sync時の依存バージョン警告や小さな修正は発生し得る前提で扱うこと。
 
-## リリース手順（Google Play）
-1. Play Console 登録（$25・一回のみ）
-2. 内部テスト → クローズドテスト（テスター12人×14日連続オプトイン。相互テストコミュニティ利用可）
-3. 製品版アクセス申請 → 審査 → 公開
-4. 投げ銭は Play Billing の消費型アイテムとして追加（フェーズ2）
+Android Studio でプロジェクトを開き、Gradle Sync 後に実機またはエミュレータで実行してください。
 
-## フェーズ2候補
-- Gemini Nano 本実装（AICore対応判定＋フォールバック）
-- 種目別の重量/e1RM推移グラフ
-- Play Billing 投げ銭（コーヒー1杯 ¥300 消費型）
-- プレート計算機、レスト タイマー
+## ライセンス
+
+（必要に応じて記載）
